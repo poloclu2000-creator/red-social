@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mi Red Social</title>
+</head>
+<body>
+
+<h1>🚀 Mi Red Social</h1>
+
+<form method="POST" action="/crear_post">
+    <input type="text" name="content" placeholder="Escribe algo...">
+    <button>Publicar</button>
+</form>
+
+<hr>
+
+<h2>Publicaciones</h2>
+
+{% for post in posts %}
+    <p>📝 {{ post.content }}</p>
+    <hr>
+{% endfor %}
+
+</body>
+</html>
