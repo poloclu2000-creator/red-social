@@ -16,20 +16,22 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
+    posts = db.relationship('Post', backref='author', lazy=True)
 
 # MODELO POST
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(300), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    likes = db.Column(db.Integer, default=0)
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 @app.route('/')
 @login_required
 def home():
-    posts = Post.query.all()
+    posts = Post.query.order_by(Post.id.desc()).all()
     return render_template('home.html', posts=posts)
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -63,13 +65,21 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 @app.route('/crear_post', methods=['POST'])
+@login_required
 def crear_post():
     content = request.form['content']
 
-    nuevo_post = Post(content=content)
+    nuevo_post = Post(content=content, user_id=current_user.id)
     db.session.add(nuevo_post)
     db.session.commit()
 
+    return redirect(url_for('home'))
+@app.route('/like/<int:post_id>')
+@login_required
+def like(post_id):
+    post = Post.query.get(post_id)
+    post.likes = (post.likes or 0) + 1
+    db.session.commit()
     return redirect(url_for('home'))
 
 if __name__ == '__main__':

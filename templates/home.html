@@ -2,23 +2,41 @@
 <html>
 <head>
     <title>Mi Red Social</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-<h1>🚀 Mi Red Social</h1>
+<h1>Bienvenido a tu red social</h1>
+<a href="/logout">
+    <button>Cerrar sesión</button>
+</a>
 
-<form method="POST" action="/crear_post">
-    <input type="text" name="content" placeholder="Escribe algo...">
-    <button>Publicar</button>
+<!-- FORMULARIO DE PUBLICACIÓN -->
+<form action="/crear_post" method="POST">
+    <input type="text" name="content" placeholder="Escribe algo..." required>
+    <button type="submit">Publicar</button>
 </form>
 
 <hr>
 
 <h2>Publicaciones</h2>
 
+<!-- LISTA DE POSTS -->
 {% for post in posts %}
-    <p>📝 {{ post.content }}</p>
-    <hr>
+<div class="post">
+
+{% if post.author %}
+    <h3>{{ post.author.username }}</h3>
+{% else %}
+    <h3>Usuario</h3>
+{% endif %}
+
+    <p>{{ post.content }}</p>
+<a href="/like/{{ post.id }}">
+    ❤️ {{ post.likes }} Me gusta
+</a>
+
+</div>
 {% endfor %}
 
 </body>
