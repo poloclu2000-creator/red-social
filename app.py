@@ -17,7 +17,7 @@ if database_url and database_url.startswith("postgres://"):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SECRET_KEY'] = 'mi_secreto'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'g
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 db = SQLAlchemy(app)
 with app.app_context():
