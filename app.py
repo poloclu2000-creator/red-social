@@ -21,15 +21,14 @@ app.config['SECRET_KEY'] = 'mi_secreto'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 db = SQLAlchemy(app)
+with app.app_context():
+    db.create_all()
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-@app.before_first_request
-def create_tables():
-    with app.app_context():
-        db.create_all()
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
