@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-database_url = database_url = os.environ.get('DATABASE_URL')
+database_url = os.environ.get('DATABASE_URL')
 
 if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
@@ -25,6 +25,11 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+@app.before_first_request
+def create_tables():
+    with app.app_context():
+        db.create_all()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,7 +67,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        foto = request.files['foto']
+        foto = request.files.get('foto')
 
         usuario_existente = User.query.filter_by(username=username).first()
 
